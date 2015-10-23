@@ -30,8 +30,8 @@ glimpse(SCC)
 
 BC.type.PM25 <- NEI %>%                                  # from the NEI database
     filter(fips == '24510') %>%                  # filter by Baltimora city code
-    select(Emissions, type, year) %>%            # take only Emissions and years
-    group_by(year,type) %>%    # group result data frame by year and nex by type
+    select(Emissions, type, year) %>%      # take only Emissions, type and years
+    group_by(year,type) %>%   # group result data frame by year and next by type
     summarise(total = sum(Emissions)) %>%   # sum of Emissions by type each year
     arrange(year) %>%                       # sort by year (for assure ordering)
     mutate(type = as.factor(type))              # transforming to use in ggplot2
