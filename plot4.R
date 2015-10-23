@@ -20,7 +20,6 @@ rm(content.name, temp)
 
 library(dplyr)                                # upgrade data.frame to data_frame
 library(stringr)
-library(ggplot2)                                           # grammar of graphics
 
 NEI <- as_data_frame(NEI)                                  # create a data_frame
 SCC <- as_data_frame(SCC)
@@ -28,14 +27,13 @@ SCC <- as_data_frame(SCC)
 glimpse(NEI)                                                      # inspect data
 glimpse(SCC)
 
-SCC.CC <- filter(
-            SCC,
-            grepl(
-                '(.*Coal.*Comb.*)|(.*Comb.*Coal.*)',
-                Short.Name
-            )
+SCC.CC <- SCC %>%                                                     # from SCC
+          filter(grepl(     # select only rows in which it can be find a pattern
+                    '(.*Coal.*Comb.*)|(.*Comb.*Coal.*)',    # on Coal (AND) Comb
+                    Short.Name                 # in the general (condensed) name
+                )
           ) %>%
-          select(SCC)
+          select(SCC) # finally select only the SCC variable to retrive the code
 
 CC.PM25 <- NEI %>%                                       # from the NEI database
     filter(SCC %in% SCC.CC[[1]]) %>%     # filter by SCC coal combustion-related
@@ -50,12 +48,12 @@ CC.PM25 <- NEI %>%                                       # from the NEI database
 png('plot4.png')             # switch-on output on PNG device named as requested
 
 def.bars <- barplot(  # create a barplot (and save to store x-coord of the bars)
-    height = CC.PM25$total,                       # of the total PM2.5 each year
+    height = CC.PM25$total,     # of the coal combustion-related PM2.5 each year
     density = 75,                              # with a partial filling of color
     angle = -20,                      # quite descending angle for texture lines
     names.arg = CC.PM25$year,                         # bars' names are the year
     col = 'steelblue4',                           # my idea of pollution's color
-    main = 'Coal combustion-related pm2.5 in USA (1999 - 2008)',                  # with its title
+    main = 'Coal combustion-related pm2.5 in USA (1999 - 2008)',# with its title
     xlab = 'years',                                           # and axes' labels
     ylab = 'pm 2.5 (tons)'
 )
